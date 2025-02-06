@@ -13,6 +13,16 @@ struct GolangciLintLangserverBinary {
 }
 
 impl GolangciLintExtension {
+    fn language_server_initialization_options(
+        &mut self,
+        _language_server_id: &LanguageServerId,
+        _worktree: &zed::Worktree,
+    ) -> Result<Option<zed::serde_json::Value>> {
+        Ok(Some(zed::serde_json::json!({
+            "command": ["golangci-lint", "run", "--disable", "lll", "--out-format", "json"]
+        })))
+    }
+
     fn language_server_binary(
         &mut self,
         language_server_id: &LanguageServerId,
@@ -116,6 +126,14 @@ impl GolangciLintExtension {
 }
 
 impl zed::Extension for GolangciLintExtension {
+    fn language_server_initialization_options(
+        &mut self,
+        language_server_id: &LanguageServerId,
+        worktree: &zed::Worktree,
+    ) -> Result<Option<zed::serde_json::Value>> {
+        self.language_server_initialization_options(language_server_id, worktree)
+    }
+
     fn new() -> Self {
         Self {
             cached_binary_path: None,
